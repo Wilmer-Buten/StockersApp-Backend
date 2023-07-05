@@ -24,7 +24,7 @@ const userSchema = new Schema(
     total_books: Number,
     role: {
       type: String,
-      default: roles.STUDENT,
+      default: roles.STUDENT
     },
   },
   {

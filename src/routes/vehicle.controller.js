@@ -2,7 +2,6 @@ import CanvassingVehicle from "../models/CanvassingVehicle";
 
 export const getVehicles = async (req,res) => {
     const foundVehicles = await CanvassingVehicle.find();
-    console.log(foundVehicles)
     res.status(200).json(foundVehicles)
     
 }
@@ -12,11 +11,10 @@ export const createVehicle = async(req, res) =>{
   
         const newUser =  new CanvassingVehicle(req.body)
         const savedVehicle = await newUser.save(req.body)
-        console.log(savedVehicle)
         res.status(200).json(1);
 
        } catch (err) {
-            console.log(err)
+            console.error(err)
             res.json('err')
        }
 } 
@@ -25,9 +23,6 @@ export const saveVehicleBooks = async(req, res) => {
   
     try {
         const data = req.body
-        console.log(data)        
-
-    const newQuantityPerBook = []    
         
     const vehicle = await CanvassingVehicle.findById(data.vehicleId, {password: 0})
     
@@ -40,10 +35,8 @@ export const saveVehicleBooks = async(req, res) => {
 
     if(data.overwrite){
         const index= vehicle.quantity_per_book.findIndex((obj) => { return Date.parse(obj.date) === Date.parse(data.date)})
-        console.log(index)
        vehicle.quantity_per_book[index] = newEntry 
        const updatedVehicle = await CanvassingVehicle.updateOne({_id: data.vehicleId}, {quantity_per_book: vehicle.quantity_per_book})
-       console.log(updatedVehicle) 
        return res.status(200).json('vehiclesBooks saved')
 
     }
@@ -51,11 +44,10 @@ export const saveVehicleBooks = async(req, res) => {
         let vehicleQuantityArr = vehicle.quantity_per_book
         vehicleQuantityArr.push(newEntry)
         const updatedVehicle = await CanvassingVehicle.updateOne({_id: data.vehicleId}, {quantity_per_book: vehicleQuantityArr})
-        console.log(updatedVehicle)
 
     res.status(200).json('vehiclesBooks saved')
     } catch (err) {
         res.status(401).json(err)
-        console.log(err)
+        console.error(err)
     }
 }

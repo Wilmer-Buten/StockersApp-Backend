@@ -19,6 +19,7 @@ export const signUp = async (req,res) => {
 }
 
 export const signIn = async (req, res) => {
+  
     try {
         const foundUser = await User.find({
             email: req.body.email,
@@ -28,8 +29,8 @@ export const signIn = async (req, res) => {
             return res.status(403).json('User not found')
         }
         console.log(foundUser)
-        const token = jwt.sign({id: foundUser[0]._id, name: foundUser[0].name}, config.SECRET)
-        console.log(jwt.decode(token), )
+        const token = jwt.sign({id: foundUser[0]._id, name: foundUser[0].name, role: foundUser[0].role}, config.SECRET)
+        console.log(jwt.decode(token) )
         res.status(200).json({
             userId: foundUser[0]._id,
             token: token
@@ -46,6 +47,7 @@ export const getUsers = async (req,res) => {
     const users = foundUsers.map((user) =>{
         return {
             userId: user._id, 
+            name: user.username,
             quantity_per_book: user.quantity_per_book
         }
     })

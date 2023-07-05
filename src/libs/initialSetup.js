@@ -60,7 +60,6 @@ export const createBooks = async () => {
         category: category.DEVOTIONAL,
       }).save(),
     ]);
-    console.log(values);
   } catch (error) {
     console.error(error);
   }
@@ -94,7 +93,6 @@ export const createRoles = async () => {
         new Role({ role: roles.ADMIN}).save()
       ]
     )
-    console.log(values)
   } catch (err) {
     console.error(err)
     
