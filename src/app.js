@@ -1,3 +1,4 @@
+require("dotenv").config();
 import express from 'express';
 import booksRoutes from './routes/books.routes' 
 import userRoutes from './routes/user.routes';
@@ -17,7 +18,7 @@ createCategories();
 app.use(cors(
    
 ));
-app.set('port', 4000)
+app.set('port', process.env.PORT || 4000)
 app.use(morgan('dev'))
 app.use(express.json());
 app.use(booksRoutes)

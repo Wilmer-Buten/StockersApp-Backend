@@ -25,6 +25,7 @@ export const calculateWeeklyReport = async (req, res) => {
       let newReport = [];
       foundUsers.forEach((user) => {
         user.quantity_per_book.forEach((userQuantityPerBookObj) => {
+          if(userQuantityPerBookObj.date === data.date){
           userQuantityPerBookObj.quantity.forEach((userQuantityObj) => {
             if (
               newReport.find((obj) => {
@@ -42,6 +43,7 @@ export const calculateWeeklyReport = async (req, res) => {
               newReport.push(userQuantityObj);
             }
           });
+          }
         });
       });
       return newReport;
@@ -114,8 +116,8 @@ export const calculateWeeklyReport = async (req, res) => {
       console.error(err);
     }
   };
-
   let booksInBags = await calculateStudentBooks();
+  console.log(booksInBags)
   let booksInVehicles = await calculateVehicleBooks();
   let booksInRooms = await calculateRoomBooks();
 

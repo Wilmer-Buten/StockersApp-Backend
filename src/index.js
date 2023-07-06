@@ -4,4 +4,4 @@ import './database';
 const port = app.get('port')
 app.listen(port)
 
-console.log('Server on port', 4000)
+console.log('Server on port', port)

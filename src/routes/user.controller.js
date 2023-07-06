@@ -1,6 +1,5 @@
 import User from "../models/User"
 import jwt from 'jsonwebtoken'
-import config from '../config'
 
 export const signUp = async (req,res) => {
 
@@ -29,7 +28,7 @@ export const signIn = async (req, res) => {
             return res.status(403).json('User not found')
         }
         console.log(foundUser)
-        const token = jwt.sign({id: foundUser[0]._id, name: foundUser[0].name, role: foundUser[0].role}, config.SECRET)
+        const token = jwt.sign({id: foundUser[0]._id, name: foundUser[0].name, role: foundUser[0].role}, process.env.SECRET)
         console.log(jwt.decode(token) )
         res.status(200).json({
             userId: foundUser[0]._id,
