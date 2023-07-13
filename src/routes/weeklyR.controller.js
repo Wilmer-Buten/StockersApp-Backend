@@ -58,19 +58,19 @@ export const calculateWeeklyReport = async (req, res) => {
       foundVehicles.forEach((vehicle) => {
         vehicle.quantity_per_book.forEach((vehicleQuantityPerBookObj) => {
           if(vehicleQuantityPerBookObj.date === data.date){
-          vehicleQuantityPerBookObj.quantity.forEach((vehicleQuantityObj) => {
-            if (
-              newReport.find((obj) => {
-                return obj.bookId === vehicleQuantityObj.bookId;
-              })
-            ) {
-              const index = newReport.findIndex((obj) => {
-                return obj.bookId === vehicleQuantityObj.bookId;
-              });
+            vehicleQuantityPerBookObj.quantity.forEach((vehicleQuantityObj) => {
+              if (
+                newReport.find((obj) => {
+                  return obj.bookId === vehicleQuantityObj.bookId;
+                })
+                ) {
+                  const index = newReport.findIndex((obj) => {
+                    return obj.bookId === vehicleQuantityObj.bookId;
+                  });
               newReport[index].quantity = JSON.stringify(
                 Number(newReport[index].quantity) +
                   Number(vehicleQuantityObj.quantity)
-              );
+                  );
             } else {
               newReport.push(vehicleQuantityObj);
             }
@@ -117,7 +117,6 @@ export const calculateWeeklyReport = async (req, res) => {
     }
   };
   let booksInBags = await calculateStudentBooks();
-  console.log(booksInBags)
   let booksInVehicles = await calculateVehicleBooks();
   let booksInRooms = await calculateRoomBooks();
 
@@ -128,6 +127,7 @@ export const calculateWeeklyReport = async (req, res) => {
     });
     return total;
   };
+  
   const calculateTotalPerBook = (
     booksInBags,
     booksInVehicles,
@@ -238,6 +238,5 @@ export const calculateWeeklyReport = async (req, res) => {
     });
   };
   await updateBooks()
-
   res.status(200).json(finalReport);
 };

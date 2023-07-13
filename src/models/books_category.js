@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 
 
-const books_category = new Schema({
+const Books_category = new Schema({
     category: {
         type: String, 
         trim: true
@@ -11,4 +11,4 @@ const books_category = new Schema({
     versionKey: false
 });
 
-export default model('Books_category', books_category);
+export default model('Books_category', Books_category);

@@ -1,4 +1,6 @@
 import CanvassingVehicle from "../models/CanvassingVehicle";
+var ObjectId = require('mongodb').ObjectId;
+
 
 export const getVehicles = async (req,res) => {
     const foundVehicles = await CanvassingVehicle.find();
@@ -8,10 +10,10 @@ export const getVehicles = async (req,res) => {
 
 export const createVehicle = async(req, res) =>{
     try {
-  
-        const newUser =  new CanvassingVehicle(req.body)
-        const savedVehicle = await newUser.save(req.body)
-        res.status(200).json(1);
+        const data = req.body;
+        const newUser =  new CanvassingVehicle({vehicle_name: data.name})
+        await newUser.save(req.body)
+        res.status(200).json(newUser);
 
        } catch (err) {
             console.error(err)
@@ -49,5 +51,20 @@ export const saveVehicleBooks = async(req, res) => {
     } catch (err) {
         res.status(401).json(err)
         console.error(err)
+    }
+}
+
+export const deleteVehicles = async (req, res) => {
+
+    const data = req.body;
+    try {
+        data.itemsIds.forEach(async (itemId) => {
+            let convertedId = new ObjectId(itemId);
+            await CanvassingVehicle.deleteOne({_id: convertedId})
+        })
+        const foundVehicles = await CanvassingVehicle.find()
+        res.status(200).json(foundVehicles)
+    } catch (err) {
+        
     }
 }

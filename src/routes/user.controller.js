@@ -27,9 +27,7 @@ export const signIn = async (req, res) => {
         if(foundUser.length === 0){
             return res.status(403).json('User not found')
         }
-        console.log(foundUser)
         const token = jwt.sign({id: foundUser[0]._id, name: foundUser[0].name, role: foundUser[0].role}, process.env.SECRET)
-        console.log(jwt.decode(token) )
         res.status(200).json({
             userId: foundUser[0]._id,
             token: token
@@ -50,7 +48,6 @@ export const getUsers = async (req,res) => {
             quantity_per_book: user.quantity_per_book
         }
     })
-    console.log(users)
     res.status(200).json(users)
 }
 
@@ -58,7 +55,6 @@ export const saveUserBooks = async(req,res )=> {
   
     try {
         const data = req.body
-        console.log(data)        
 
     const newQuantityPerBook = []    
         
@@ -73,10 +69,8 @@ export const saveUserBooks = async(req,res )=> {
 
     if(data.overwrite){
         const index= user.quantity_per_book.findIndex((obj) => { return Date.parse(obj.date) === Date.parse(data.date)})
-        console.log(index)
        user.quantity_per_book[index] = newEntry 
        const updatedUser = await User.updateOne({_id: data.userId}, {quantity_per_book: user.quantity_per_book})
-       console.log(updatedUser) 
        return res.status(200).json('StudentBooks saved')
 
     }
@@ -84,7 +78,6 @@ export const saveUserBooks = async(req,res )=> {
         let userQuantityArr = user.quantity_per_book
         userQuantityArr.push(newEntry)
         const updatedUser = await User.updateOne({_id: data.userId}, {quantity_per_book: userQuantityArr})
-        console.log(updatedUser)
 
     res.status(200).json('userBooks saved')
     } catch (err) {
@@ -117,6 +110,5 @@ export const saveUserBooks = async(req,res )=> {
 
 export const editUserBooks = (req,res )=> {
     const index = req.params.id
-    console.log(index)
     res.json(`Libro ${index} saved`)
 }

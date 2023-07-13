@@ -3,6 +3,8 @@ import { category } from "./category.enum";
 import Books_category from "../models/books_category";
 import Role from "../models/Role";
 import { roles } from "./roles.enum";
+import StockerRoom from "../models/StockerRoom";
+import CanvassingVehicle from "../models/CanvassingVehicle";
 
 export const createBooks = async () => {
   
@@ -44,7 +46,7 @@ export const createBooks = async () => {
       }).save(),
       new Book({
         name: "POWERFUL PLATE",
-        category: category.category.COOK,
+        category: category.COOK,
       }).save(),
       new Book({ name: "SIMPLY FRESH", category: category.COOK }).save(),
       new Book({
@@ -59,6 +61,50 @@ export const createBooks = async () => {
         name: "YOUR QUESTIONS GOD'S ANSWERS",
         category: category.DEVOTIONAL,
       }).save(),
+      new Book({
+        name: "THE PARABOLES",
+        category: category.DEVOTIONAL,
+      }).save(),
+      new Book({
+        name: "SIMPLY FRESH",
+        category: category.COOK,
+      }).save(),
+      new Book({
+        name: "SP - A BETTER WAY OF LIFE",
+        category: category.COOK,
+      }).save(),
+      new Book({
+        name: "SP - FIGHTING DESEASE WITH FOOD",
+        category: category.HEALTH,
+      }).save(),
+      new Book({
+        name: "SP - HISTORY OF FREEDOM",
+        category: category.DEVOTIONAL,
+      }).save(),
+      new Book({
+        name: "SP - HOPE AND HAPPINESS",
+        category: category.DEVOTIONAL,
+      }).save(),
+      new Book({
+        name: "SP - IN SEARCH OF PEACE ",
+        category: category.DEVOTIONAL,
+      }).save(),
+      new Book({
+        name: "SP - MY FOREVER FRIEND",
+        category: category.DEVOTIONAL,
+      }).save(),
+      new Book({
+        name: "SP - NEW TESTAMENT BIBLE ADVENTURES",
+        category: category.DEVOTIONAL,
+      }).save(),
+      new Book({
+        name: "SP - YOUR QUESTIONS GOD'S ANSWERS",
+        category: category.DEVOTIONAL,
+      }).save(),
+      new Book({
+        name: "SP - THEY CALL HIM JESUS",
+        category: category.DEVOTIONAL,
+      }).save()
     ]);
   } catch (error) {
     console.error(error);
@@ -94,7 +140,70 @@ export const createRoles = async () => {
       ]
     )
   } catch (err) {
-    console.error(err)
-    
+    console.error(err)   
+  }
+}
+
+export const createVehicles = async () => {
+
+  try {
+    const count = await CanvassingVehicle.estimatedDocumentCount(); 
+    if(count > 0) return;
+    const values = Promise.all(
+      [
+        new CanvassingVehicle(
+          {
+            vehicle_name: "Van de Andres", 
+            photo: "asasa", 
+            quantity_per_book: [ 
+          ]
+          }).save(),
+          new CanvassingVehicle(
+            {
+              vehicle_name: "Van de Valeria", 
+              photo: " ", 
+              quantity_per_book: [ 
+            ]
+            }).save(),
+            new CanvassingVehicle(
+              {
+                vehicle_name: "Van de Olga", 
+                photo: " ", 
+                quantity_per_book: [ 
+              ]
+              }).save(),
+              new CanvassingVehicle(
+                {
+                  vehicle_name: "Van de Kevin", 
+                  photo: " ", 
+                  quantity_per_book: [ 
+                ]
+                }).save()
+      ]
+    )
+  } catch (err) {
+    console.error(err)   
+  }
+}
+
+export const createRooms = async () => {
+
+  try {
+    const count = await StockerRoom.estimatedDocumentCount(); 
+    if(count > 0) return;
+
+    const values = Promise.all(
+      [
+        new StockerRoom(
+          {
+            room_name: "Stocker room 1", 
+            photo: "asasa", 
+            quantity_per_book: [ 
+          ]
+          }).save()
+      ]
+    )
+  } catch (err) {
+    console.error(err)   
   }
 }
