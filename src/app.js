@@ -5,15 +5,19 @@ import userRoutes from './routes/user.routes';
 import weeklyReportRoutes from './routes/weeklyR.routes';
 import vehicleRoutes from './routes/vehicle.routes'
 import roomsRoutes from './routes/stockerRoom.routes'
+import categoriesRoutes from './routes/category.routes'
 
 import morgan from 'morgan';
 import cors from 'cors';
-import { createBooks, createCategories } from './libs/initialSetup';
+import { createBooks, createCategories, createRooms, createVehicles } from './libs/initialSetup';
 
 const app = express();
 
 createBooks();
 createCategories();
+createVehicles();
+createRooms();
+
 
 app.use(cors(
    
@@ -26,6 +30,7 @@ app.use(userRoutes)
 app.use(weeklyReportRoutes)
 app.use(vehicleRoutes)
 app.use(roomsRoutes)
+app.use(categoriesRoutes)
 app.use(express.urlencoded({extended: false}))
 
 export default app;
