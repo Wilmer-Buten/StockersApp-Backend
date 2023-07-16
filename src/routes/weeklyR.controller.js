@@ -26,26 +26,28 @@ export const calculateWeeklyReport = async (req, res) => {
       foundUsers.forEach((user) => {
         user.quantity_per_book.forEach((userQuantityPerBookObj) => {
           if(userQuantityPerBookObj.date === data.date){
-          userQuantityPerBookObj.quantity.forEach((userQuantityObj) => {
-            if (
-              newReport.find((obj) => {
-                return obj.bookId === userQuantityObj.bookId;
-              })
-            ) {
+            userQuantityPerBookObj.quantity.forEach((userQuantityObj) => {
+              if (
+                newReport.find((obj) => {
+                  return obj.bookId === userQuantityObj.bookId;
+                })
+                ) {
               const index = newReport.findIndex((obj) => {
                 return obj.bookId === userQuantityObj.bookId;
               });
-              newReport[index].quantity = JSON.stringify(
-                Number(newReport[index].quantity) +
-                  Number(userQuantityObj.quantity)
-              );
+              newReport[index].quantity =
+              Number(newReport[index].quantity) +
+              Number(userQuantityObj.quantity)
             } else {
-              newReport.push(userQuantityObj);
+              newReport.push( {
+                bookId: userQuantityObj.bookId,
+                quantity: Number(userQuantityObj.quantity)
+              });
             }
           });
-          }
-        });
+        }
       });
+    });
       return newReport;
     } catch (err) {
       console.error(err);
@@ -67,12 +69,16 @@ export const calculateWeeklyReport = async (req, res) => {
                   const index = newReport.findIndex((obj) => {
                     return obj.bookId === vehicleQuantityObj.bookId;
                   });
-              newReport[index].quantity = JSON.stringify(
+              newReport[index].quantity = 
                 Number(newReport[index].quantity) +
                   Number(vehicleQuantityObj.quantity)
-                  );
             } else {
-              newReport.push(vehicleQuantityObj);
+              newReport.push(
+                {
+                  bookId: vehicleQuantityObj.bookId,
+                  quantity: Number(vehicleQuantityObj.quantity)
+                }
+              );
             }
           });
         }
@@ -100,12 +106,14 @@ export const calculateWeeklyReport = async (req, res) => {
               const index = newReport.findIndex((obj) => {
                 return obj.bookId === roomQuantityObj.bookId;
               });
-              newReport[index].quantity = JSON.stringify(
+              newReport[index].quantity = 
                 Number(newReport[index].quantity) +
                   Number(roomQuantityObj.quantity)
-              );
             } else {
-              newReport.push(roomQuantityObj);
+              newReport.push({
+                bookId: roomQuantityObj.bookId,
+                quantity: Number(roomQuantityObj.quantity)
+              });
             }
           });
         }
@@ -116,16 +124,34 @@ export const calculateWeeklyReport = async (req, res) => {
       console.error(err);
     }
   };
+
   let booksInBags = await calculateStudentBooks();
   let booksInVehicles = await calculateVehicleBooks();
   let booksInRooms = await calculateRoomBooks();
 
-  const calculateTotalPerPlace = (booksArr, mjs) => {
+  const calculateTotalPerPlace = (booksArr) => {
     let total = 0;
     booksArr.forEach((booksObj) => {
       total = total + Number(booksObj.quantity);
     });
     return total;
+  };
+  const finalReportWithoutTotal = {
+    
+    date: data.date,
+    
+    booksInBags: {
+      quantity_per_book: booksInBags,
+      total: calculateTotalPerPlace(booksInBags),
+    },
+    booksInVehicles: {
+      quantity_per_book: booksInVehicles,
+      total: calculateTotalPerPlace(booksInVehicles),
+    },
+    booksInRooms: {
+      quantity_per_book: booksInRooms,
+      total: calculateTotalPerPlace(booksInRooms),
+    },
   };
   
   const calculateTotalPerBook = (
@@ -139,7 +165,7 @@ export const calculateWeeklyReport = async (req, res) => {
         return obj.bookId === book.bookId;
       });
       if (index > -1) {
-        newBooksQuantity[index].quantity = Number(newBooksQuantity[index].quantity) + Number(book.quantity);
+        newBooksQuantity[index].quantity = Number(newBooksQuantity[index].quantity);
       } else {
         newBooksQuantity.push(book);
       }
@@ -150,8 +176,7 @@ export const calculateWeeklyReport = async (req, res) => {
         return obj.bookId === book.bookId;
       });
       if (i > -1) {
-        newBooksQuantity[i].quantity =
-          Number(newBooksQuantity[i].quantity) + Number(book.quantity);
+        newBooksQuantity[i].quantity = Number(newBooksQuantity[i].quantity);
       } else {
         newBooksQuantity.push(book);
       }
@@ -161,7 +186,7 @@ export const calculateWeeklyReport = async (req, res) => {
         return obj.bookId === book.bookId;
       });
       if (roomIndex > -1) {
-        newBooksQuantity[roomIndex].quantity = Number(newBooksQuantity[roomIndex].quantity) + Number(book.quantity);
+        newBooksQuantity[roomIndex].quantity = Number(newBooksQuantity[roomIndex].quantity);
       } else {
         newBooksQuantity.push(book);
       }
@@ -169,28 +194,26 @@ export const calculateWeeklyReport = async (req, res) => {
     return newBooksQuantity;
   };
 
+  const updateBooks = async () => {
+   
+    const totalBooks = calculateTotalPerBook(
+      booksInBags,
+      booksInVehicles,
+      booksInRooms
+    );
+    totalBooks.forEach(async (book) => {
+      await Book.updateOne({ _id: book.bookId }, { quantity: book.quantity });
+    });
+  };
+  await updateBooks();
+
   const calculateTotal = (booksInBags, booksInVehicles, booksInRooms) => {
     let total = 0;
     total = booksInBags.total + booksInVehicles.total + booksInRooms.total;
     return total;
   };
 
-  const finalReportWithoutTotal = {
-    date: data.date,
-    booksInBags: {
-      quantity_per_book: booksInBags,
-      total: calculateTotalPerPlace(booksInBags, "as"),
-    },
-    booksInVehicles: {
-      quantity_per_book: booksInVehicles,
-      total: calculateTotalPerPlace(booksInVehicles),
-    },
-    booksInRooms: {
-      quantity_per_book: booksInRooms,
-      total: calculateTotalPerPlace(booksInRooms),
-    },
-  };
-
+ 
   const finalReport = {
     date: data.date,
     books_in_bags_quantity: finalReportWithoutTotal.booksInBags,
@@ -202,7 +225,6 @@ export const calculateWeeklyReport = async (req, res) => {
       finalReportWithoutTotal.booksInRooms
     ),
   };
-  
   const newReport = new WeeklyReport(finalReport);
   
   if (data.overwrite) {
@@ -213,7 +235,7 @@ export const calculateWeeklyReport = async (req, res) => {
     });
     const weeklyReportId = foundWeeklyReports[index]._id;
     foundWeeklyReports[index] = finalReport;
-    const updatedWeeklyReport = await WeeklyReport.updateOne(
+    await WeeklyReport.updateOne(
       { _id: weeklyReportId },
       {
         date: finalReport.date,
@@ -226,17 +248,6 @@ export const calculateWeeklyReport = async (req, res) => {
   } else{
     newReport.save()
   }
-  const updateBooks = async () => {
-   
-    const totalBooks = calculateTotalPerBook(
-      booksInBags,
-      booksInVehicles,
-      booksInRooms
-    );
-    totalBooks.forEach(async (book) => {
-      await Book.updateOne({ _id: book.bookId }, { quantity: book.quantity });
-    });
-  };
-  await updateBooks()
+
   res.status(200).json(finalReport);
 };
